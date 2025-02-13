@@ -1,15 +1,16 @@
 'use client';
 
-import type { Current } from '@/types/Current';
+// import type { Current } from '@/types/Current';
 import { Search } from 'lucide-react';
 import { useState } from 'react';
 
-type CitySelectType = {
-  current?: Current;
-  setCurrent: React.Dispatch<React.SetStateAction<Current>>;
-};
+// type CitySelectType = {
+//   current?: Current;
+//   setCurrent: React.Dispatch<React.SetStateAction<Current>>;
+// };
 
-export default function CitySelect(props: CitySelectType) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export default function CitySelect(props: any) {
   const [cidade, setCidade] = useState('');
 
   const key = process.env.NEXT_PUBLIC_APIKEY;
