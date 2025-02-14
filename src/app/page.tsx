@@ -12,12 +12,12 @@ export default function Home() {
     <div>
       <Header />
       <CitySelect setCurrent={setCurrent} />
-      <Previsao />
-      <div>
+      {current && <Previsao current={current} />}
+      {/* <div>
         <p>Cidade: {current?.name}</p>
         <p>Temperatura: {current?.main.temp} TA EM KELVIN AINDA</p>
         <p>{current?.weather[0].description}</p>
-      </div>
+      </div> */}
     </div>
   );
 }
