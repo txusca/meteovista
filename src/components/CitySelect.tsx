@@ -13,8 +13,8 @@ import { useState } from 'react';
 export default function CitySelect(props: any) {
   const [cidade, setCidade] = useState('');
 
-  const key = 'bd0b041bb769382da4882f9ee102513a';
-  // const key = process.env.NEXT_PUBLIC_APIKEY;
+  // const key = 'bd0b041bb769382da4882f9ee102513a';
+  const key = process.env.NEXT_PUBLIC_APIKEY;
   async function fetchData() {
     const response = await fetch(
       `https://api.openweathermap.org/data/2.5/weather?q=${cidade}&appid=${key}`
