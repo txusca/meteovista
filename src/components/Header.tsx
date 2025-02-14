@@ -9,8 +9,8 @@ export default function Header() {
           <Cloud size={32} className="" />
           <span className="text-2xl ml-2 font-bold">MeteoVista</span>
         </Link>
-        <nav>
-          <ul className="flex">
+        <nav className="">
+          <ul className=" hidden md:flex">
             <li>
               <Link href={'#'} className="hover:underline mr-4">
                 Previsão
