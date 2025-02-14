@@ -1,6 +1,7 @@
 import Card from './Card';
 
-export default function Previsao(props) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export default function Previsao(props: any) {
   const tempNow = Math.ceil(props.current?.main.temp - 273.15);
   const teste = props.current?.weather[0].description;
   return (
