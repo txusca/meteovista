@@ -2,7 +2,7 @@
 
 // import type { Current } from '@/types/Current';
 import { Search } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 // type CitySelectType = {
 //   current?: Current;
@@ -14,6 +14,23 @@ export default function CitySelect(props: any) {
   const [cidade, setCidade] = useState('');
 
   const key = process.env.NEXT_PUBLIC_APIKEY;
+
+  useEffect(() => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition((position) => {
+        const { latitude, longitude } = position.coords;
+        async function fetchDataLatLon(latitude: number, longitude: number) {
+          const response = await fetch(
+            `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${key}`
+          );
+          const data = await response.json();
+          props.setCurrent(data);
+        }
+        fetchDataLatLon(latitude, longitude);
+      });
+    }
+  }, []);
+
   async function fetchData() {
     const response = await fetch(
       `https://api.openweathermap.org/data/2.5/weather?q=${cidade}&appid=${key}`
@@ -22,12 +39,6 @@ export default function CitySelect(props: any) {
     props.setCurrent(data);
     console.log(data);
   }
-
-  const tempC = props.current
-    ? Math.ceil(parseInt((props.current.main?.temp - 273.15).toFixed(2)))
-    : null;
-
-  console.log(tempC);
 
   return (
     <div className="bg-gradient-to-r from-sky-400 to-blue-500 flex flex-col justify-center items-center py-40">
