@@ -1,15 +1,10 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 // import type { Current } from '@/types/Current';
 import { Search } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
-// type CitySelectType = {
-//   current?: Current;
-//   setCurrent: React.Dispatch<React.SetStateAction<Current>>;
-// };
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export default function CitySelect(props: any) {
   const [cidade, setCidade] = useState('');
 
@@ -24,6 +19,7 @@ export default function CitySelect(props: any) {
             `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${key}`
           );
           const data = await response.json();
+          console.log(data);
           props.setCurrent(data);
         }
         fetchDataLatLon(latitude, longitude);
@@ -40,6 +36,36 @@ export default function CitySelect(props: any) {
     console.log(data);
   }
 
+  async function fetchDataOthersDay() {
+    try {
+      const response = await fetch(
+        `https://api.openweathermap.org/data/2.5/forecast?q=${cidade}&appid=${key}`
+      );
+      const data = await response.json();
+      const today = new Date();
+      const dates = [
+        today.toISOString().split('T')[0],
+        new Date(today.setDate(today.getDate() + 1))
+          .toISOString()
+          .split('T')[0],
+        new Date(today.setDate(today.getDate() + 1))
+          .toISOString()
+          .split('T')[0],
+      ];
+
+      const filteredData = dates.map((date) =>
+        data.list.find((item: any) => item.dt_txt.startsWith(date))
+      );
+
+      console.log(filteredData);
+      props.setForecast(data);
+      props.setForecastList(filteredData);
+      // props.setCurrent(filteredData);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   return (
     <div className="bg-gradient-to-r from-sky-400 to-blue-500 flex flex-col justify-center items-center py-40">
       <h1 className="text-6xl text-white font-bold mb-4 text-center">
@@ -53,6 +79,7 @@ export default function CitySelect(props: any) {
           className="flex mx-auto max-w-md"
           onSubmit={(e) => {
             e.preventDefault();
+            fetchDataOthersDay();
             fetchData();
           }}
         >
