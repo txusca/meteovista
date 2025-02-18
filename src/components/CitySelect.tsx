@@ -4,7 +4,7 @@
 // import type { Current } from '@/types/Current';
 import { Search } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import ErroMessage from './ErroMensage';
+import ErroMessage from './ErroMessage';
 
 export default function CitySelect(props: any) {
   const [cidade, setCidade] = useState('');
