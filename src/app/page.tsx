@@ -19,7 +19,7 @@ export default function Home() {
         setForecastList={setForecastList}
         setForecast={setForecast}
       />
-      {current && (
+      {current && forecast && forecastList && (
         <Previsao
           current={current}
           forecast={forecast}
