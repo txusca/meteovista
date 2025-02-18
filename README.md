@@ -3,7 +3,7 @@
 Aplicativo de previsão do tempo desenvolvido com Next.js.
 
 ## Acesse o site para ver o resultado
-[MeteoVista](https://seusite.com.br/)
+[MeteoVista](https://meteovista.vercel.app/)
 
 ## Estrutura do Projeto
 
