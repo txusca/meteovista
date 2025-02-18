@@ -4,9 +4,11 @@
 // import type { Current } from '@/types/Current';
 import { Search } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import ErroMessage from './ErroMensage';
 
 export default function CitySelect(props: any) {
   const [cidade, setCidade] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
 
   const key = process.env.NEXT_PUBLIC_APIKEY;
 
@@ -15,12 +17,15 @@ export default function CitySelect(props: any) {
       navigator.geolocation.getCurrentPosition((position) => {
         const { latitude, longitude } = position.coords;
         async function fetchDataLatLon(latitude: number, longitude: number) {
-          const response = await fetch(
-            `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${key}`
-          );
-          const data = await response.json();
-          console.log(data);
-          props.setCurrent(data);
+          try {
+            const response = await fetch(
+              `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${key}`
+            );
+            const data = await response.json();
+            props.setCurrent(data);
+          } catch (error) {
+            console.log(error);
+          }
         }
         fetchDataLatLon(latitude, longitude);
       });
@@ -28,12 +33,24 @@ export default function CitySelect(props: any) {
   }, []);
 
   async function fetchData() {
-    const response = await fetch(
-      `https://api.openweathermap.org/data/2.5/weather?q=${cidade}&appid=${key}`
-    );
-    const data = await response.json();
-    props.setCurrent(data);
-    console.log(data);
+    try {
+      const response = await fetch(
+        `https://api.openweathermap.org/data/2.5/weather?q=${cidade}&appid=${key}`
+      );
+      if (!response.ok) {
+        if (response.status === 404) {
+          setErrorMessage('Cidade não encontrada!');
+          return;
+        }
+        throw new Error('Cidade não encontrada!');
+      }
+      const data = await response.json();
+      props.setCurrent(data);
+      setErrorMessage('');
+      console.log(data);
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   async function fetchDataOthersDay() {
@@ -41,6 +58,13 @@ export default function CitySelect(props: any) {
       const response = await fetch(
         `https://api.openweathermap.org/data/2.5/forecast?q=${cidade}&appid=${key}`
       );
+      if (!response.ok) {
+        if (response.status === 404) {
+          setErrorMessage('Cidade não encontrada!');
+          return;
+        }
+        throw new Error('Cidade não encontrada!');
+      }
       const data = await response.json();
       const today = new Date();
       const dates = [
@@ -60,6 +84,7 @@ export default function CitySelect(props: any) {
       console.log(filteredData);
       props.setForecast(data);
       props.setForecastList(filteredData);
+      setErrorMessage('');
       // props.setCurrent(filteredData);
     } catch (error) {
       console.log(error);
@@ -98,6 +123,7 @@ export default function CitySelect(props: any) {
             Buscar
           </button>
         </form>
+        {errorMessage && <ErroMessage errorMessage={errorMessage} />}
       </div>
     </div>
   );
