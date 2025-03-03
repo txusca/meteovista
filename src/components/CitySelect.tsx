@@ -1,12 +1,22 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 // import type { Current } from '@/types/Current';
 import { Search } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type Dispatch, type SetStateAction } from 'react';
 import ErroMessage from './ErroMessage';
 
-export default function CitySelect(props: any) {
+interface Location {
+  latitude: number;
+  longitude: number;
+}
+
+interface CitySelectProps {
+  location: Location | undefined;
+  setLocation: Dispatch<SetStateAction<Location | undefined>>;
+  // setLocation: (location: Location) => void;
+}
+
+export default function CitySelect({ location, setLocation }: CitySelectProps) {
   const [cidade, setCidade] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
 
@@ -16,78 +26,30 @@ export default function CitySelect(props: any) {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition((position) => {
         const { latitude, longitude } = position.coords;
-        async function fetchDataLatLon(latitude: number, longitude: number) {
-          try {
-            const response = await fetch(
-              `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${key}`
-            );
-            const data = await response.json();
-            props.setCurrent(data);
-          } catch (error) {
-            console.log(error);
-          }
-        }
-        fetchDataLatLon(latitude, longitude);
+        console.log(latitude, longitude);
+        setLocation({ latitude, longitude });
+        console.log(location);
       });
     }
   }, []);
 
-  async function fetchData() {
+  async function handleLocation() {
     try {
       const response = await fetch(
-        `https://api.openweathermap.org/data/2.5/weather?q=${cidade}&appid=${key}`
+        `http://api.openweathermap.org/geo/1.0/direct?q=${cidade}&limit=1&appid=${key}`
       );
       if (!response.ok) {
         if (response.status === 404) {
-          setErrorMessage('Cidade não encontrada!');
+          setErrorMessage('Erro ao buscar localização');
           return;
         }
-        throw new Error('Cidade não encontrada!');
       }
       const data = await response.json();
-      props.setCurrent(data);
-      setErrorMessage('');
-      console.log(data);
+      const { lat, lon } = data[0];
+      setLocation({ latitude: lat, longitude: lon });
+      console.log(location);
     } catch (error) {
-      console.log(error);
-    }
-  }
-
-  async function fetchDataOthersDay() {
-    try {
-      const response = await fetch(
-        `https://api.openweathermap.org/data/2.5/forecast?q=${cidade}&appid=${key}`
-      );
-      if (!response.ok) {
-        if (response.status === 404) {
-          setErrorMessage('Cidade não encontrada!');
-          return;
-        }
-        throw new Error('Cidade não encontrada!');
-      }
-      const data = await response.json();
-      const today = new Date();
-      const dates = [
-        today.toISOString().split('T')[0],
-        new Date(today.setDate(today.getDate() + 1))
-          .toISOString()
-          .split('T')[0],
-        new Date(today.setDate(today.getDate() + 1))
-          .toISOString()
-          .split('T')[0],
-      ];
-
-      const filteredData = dates.map((date) =>
-        data.list.find((item: any) => item.dt_txt.startsWith(date))
-      );
-
-      console.log(filteredData);
-      props.setForecast(data);
-      props.setForecastList(filteredData);
-      setErrorMessage('');
-      // props.setCurrent(filteredData);
-    } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   }
 
@@ -104,8 +66,7 @@ export default function CitySelect(props: any) {
           className="flex mx-auto max-w-md"
           onSubmit={(e) => {
             e.preventDefault();
-            fetchDataOthersDay();
-            fetchData();
+            handleLocation();
           }}
         >
           <input

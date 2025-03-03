@@ -1,35 +1,67 @@
 import type { Current } from '@/types/Current';
+import type { ListForecast } from '@/types/Forecast';
+import { useEffect, useState } from 'react';
 import Card from './Card';
-import type { Forecast, List } from '@/types/Forecast';
 
 type PrevisaoProps = {
-  current?: Current;
-  forecast?: Forecast;
-  forecastList?: List[];
+  location?: { latitude: number; longitude: number };
 };
 
 export default function Previsao(props: PrevisaoProps) {
+  const key = process.env.NEXT_PUBLIC_APIKEY;
+  const [current, setCurrent] = useState<Current>();
+  const [forecastList, setForecastList] = useState<ListForecast[]>([]);
+  const { latitude, longitude } = props.location || {};
+  useEffect(() => {
+    async function fetchCurrentWeather() {
+      try {
+        const response = await fetch(
+          `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${key}`
+        );
+        const data = await response.json();
+        setCurrent(data);
+        console.log(data);
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
+    async function fetchForecast() {
+      try {
+        const response = await fetch(
+          `https://api.openweathermap.org/data/2.5/forecast/daily?lat=${latitude}&lon=${longitude}&cnt=3&appid=${key}`
+        );
+        const data = await response.json();
+        setForecastList(data.list);
+        console.log(data);
+      } catch (error) {
+        console.error(error);
+      }
+    }
+    fetchCurrentWeather();
+    fetchForecast();
+  }, [key, latitude, longitude, props.location]);
+
   return (
     <div className="py-16 bg-gray-100">
       <div className="container mx-auto px-4">
         <h2 className="text-3xl font-bold mb-8 text-center">
-          Previsão para os Próximos Dias{' '}
-          {props.current?.name && `em ${props.current.name}`}
+          Previsão para os Próximos Dias {current?.name && `em ${current.name}`}
         </h2>
 
         <div className="grid grid-cols-1 mb-4">
           <Card
             day="Agora"
-            temp={Math.ceil((props.current?.main.temp ?? 0) - 273.15)}
-            description={props.current?.weather[0].description}
-            min={Math.ceil((props.current?.main.temp_min ?? 0) - 273.15)}
-            max={Math.ceil((props.current?.main.temp_max ?? 0) - 273.15)}
+            temp={Math.floor((current?.main.temp ?? 0) - 273.15)}
+            description={current?.weather[0].description}
+            min={Math.floor((current?.main.temp_min ?? 0) - 273.15)}
+            max={Math.floor((current?.main.temp_max ?? 0) - 273.15)}
           />
         </div>
 
         <div className="grid justify-center items-center grid-cols-1 md:grid-cols-3 gap-8">
-          {Array.isArray(props.forecastList) &&
-            props.forecastList.map((day, index) => (
+          {Array.isArray(forecastList) &&
+            forecastList.map((day, index) => (
               <Card
                 key={day.dt}
                 day={
@@ -39,10 +71,10 @@ export default function Previsao(props: PrevisaoProps) {
                     ? 'Amanhã'
                     : 'Depois de amanhã'
                 }
-                temp={Math.ceil(day.main.temp - 273.15)}
-                description={day.weather[0].description}
-                min={Math.ceil((day?.main.temp_min ?? 0) - 273.15)}
-                max={Math.ceil((day?.main.temp_max ?? 0) - 273.15)}
+                // temp={Math.floor(day.main.temp - 273.15)}
+                // description={day.weather[0].description}
+                min={Math.floor((day?.temp.min ?? 0) - 273.15)}
+                max={Math.floor((day?.temp.max ?? 0) - 273.15)}
               />
             ))}
         </div>
