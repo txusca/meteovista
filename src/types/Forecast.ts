@@ -47,22 +47,43 @@ export interface Sys {
   pod: string;
 }
 
-export interface List {
-  clouds: Clouds;
+export interface ListForecast {
   dt: number;
-  dt_txt: string;
-  main: Main;
-  pop: number;
-  sys: Sys;
-  visibility: number;
+  sunrise: number;
+  sunset: number;
+  temp: Temp;
+  feels_like: Feelslike;
+  pressure: number;
+  humidity: number;
   weather: Weather[];
-  wind: Wind;
+  speed: number;
+  deg: number;
+  gust: number;
+  clouds: number;
+  pop: number;
+  rain: number;
+}
+
+export interface Temp {
+  day: number;
+  min: number;
+  max: number;
+  night: number;
+  eve: number;
+  morn: number;
+}
+
+interface Feelslike {
+  day: number;
+  night: number;
+  eve: number;
+  morn: number;
 }
 
 export interface Forecast {
   city: City;
   cnt: number;
   cod: string;
-  list: Array<List>;
+  list: Array<ListForecast>;
   message: string;
 }
