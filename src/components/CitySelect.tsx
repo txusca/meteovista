@@ -16,7 +16,7 @@ interface CitySelectProps {
   // setLocation: (location: Location) => void;
 }
 
-export default function CitySelect({ location, setLocation }: CitySelectProps) {
+export default function CitySelect({ setLocation }: CitySelectProps) {
   const [cidade, setCidade] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
 
@@ -26,9 +26,7 @@ export default function CitySelect({ location, setLocation }: CitySelectProps) {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition((position) => {
         const { latitude, longitude } = position.coords;
-        console.log(latitude, longitude);
         setLocation({ latitude, longitude });
-        console.log(location);
       });
     }
   }, []);
@@ -47,7 +45,6 @@ export default function CitySelect({ location, setLocation }: CitySelectProps) {
       const data = await response.json();
       const { lat, lon } = data[0];
       setLocation({ latitude: lat, longitude: lon });
-      console.log(location);
     } catch (error) {
       console.error(error);
     }
