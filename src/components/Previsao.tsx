@@ -20,7 +20,6 @@ export default function Previsao(props: PrevisaoProps) {
         );
         const data = await response.json();
         setCurrent(data);
-        console.log(data);
       } catch (error) {
         console.error(error);
       }
@@ -33,7 +32,6 @@ export default function Previsao(props: PrevisaoProps) {
         );
         const data = await response.json();
         setForecastList(data.list);
-        console.log(data);
       } catch (error) {
         console.error(error);
       }

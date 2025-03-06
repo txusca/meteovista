@@ -16,19 +16,25 @@ interface CitySelectProps {
   // setLocation: (location: Location) => void;
 }
 
-export default function CitySelect({ location, setLocation }: CitySelectProps) {
+interface Cidade {
+  geonameId: number;
+  name: string;
+  countryName: string;
+}
+
+export default function CitySelect({ setLocation }: CitySelectProps) {
   const [cidade, setCidade] = useState('');
+  const [result, setResult] = useState<Cidade[]>([]);
   const [errorMessage, setErrorMessage] = useState('');
 
   const key = process.env.NEXT_PUBLIC_APIKEY;
+  const geonameKey = process.env.NEXT_PUBLIC_GEONAMEKEY;
 
   useEffect(() => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition((position) => {
         const { latitude, longitude } = position.coords;
-        console.log(latitude, longitude);
         setLocation({ latitude, longitude });
-        console.log(location);
       });
     }
   }, []);
@@ -47,10 +53,41 @@ export default function CitySelect({ location, setLocation }: CitySelectProps) {
       const data = await response.json();
       const { lat, lon } = data[0];
       setLocation({ latitude: lat, longitude: lon });
-      console.log(location);
     } catch (error) {
       console.error(error);
     }
+  }
+
+  async function handleChange(e: React.FormEvent) {
+    const value = (e.target as HTMLInputElement).value;
+    setCidade(value);
+    if (value.length > 2) {
+      const response = await fetch(
+        `http://api.geonames.org/searchJSON?q=${value}&maxRows=5&username=${geonameKey}`
+      );
+      const data = await response.json();
+      const resultadoUnico = filtrarDuplicatas(data.geonames);
+      setResult(resultadoUnico);
+    } else {
+      setResult([]);
+    }
+  }
+
+  function handleCidadeSelecionada(cidade: Cidade) {
+    setCidade(`${cidade.name}, ${cidade.countryName}`);
+    setResult([]);
+  }
+
+  function filtrarDuplicatas(cidades: Cidade[]) {
+    const set = new Set();
+    return cidades.filter((cidade) => {
+      const nome = `${cidade.name}, ${cidade.countryName}`;
+      if (!set.has(nome)) {
+        set.add(nome);
+        return true;
+      }
+      return false;
+    });
   }
 
   return (
@@ -71,7 +108,7 @@ export default function CitySelect({ location, setLocation }: CitySelectProps) {
         >
           <input
             type="text"
-            onChange={(e) => setCidade(e.target.value)}
+            onChange={handleChange}
             value={cidade}
             placeholder="Digite sua localização"
             className="rounded px-3 py-2 flex-grow md:w-[304px]"
@@ -84,6 +121,19 @@ export default function CitySelect({ location, setLocation }: CitySelectProps) {
             Buscar
           </button>
         </form>
+        {result.length > 2 && (
+          <ul className="bg-white rounded-md py-1 pl-3">
+            {result.map((cidade: Cidade) => (
+              <li
+                key={cidade.geonameId}
+                onClick={() => handleCidadeSelecionada(cidade)}
+                className="cursor-pointer hover:bg-sky-50 py-2"
+              >
+                {cidade.name}, {cidade.countryName}
+              </li>
+            ))}
+          </ul>
+        )}
         {errorMessage && <ErroMessage errorMessage={errorMessage} />}
       </div>
     </div>

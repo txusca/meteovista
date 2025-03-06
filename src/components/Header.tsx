@@ -12,7 +12,7 @@ export default function Header() {
         <nav className="">
           <ul className=" hidden md:flex">
             <li>
-              <Link href={'#'} className="hover:underline mr-4">
+              <Link href={'/'} className="hover:underline mr-4">
                 Previsão
               </Link>
               <Link href={'#'} className="hover:underline mr-4">
