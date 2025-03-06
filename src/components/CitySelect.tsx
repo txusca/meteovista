@@ -28,6 +28,7 @@ export default function CitySelect({ setLocation }: CitySelectProps) {
   const [errorMessage, setErrorMessage] = useState('');
 
   const key = process.env.NEXT_PUBLIC_APIKEY;
+  const geonameKey = process.env.NEXT_PUBLIC_GEONAMEKEY;
 
   useEffect(() => {
     if (navigator.geolocation) {
@@ -62,7 +63,7 @@ export default function CitySelect({ setLocation }: CitySelectProps) {
     setCidade(value);
     if (value.length > 2) {
       const response = await fetch(
-        `http://api.geonames.org/searchJSON?q=${value}&maxRows=5&username=txusca`
+        `http://api.geonames.org/searchJSON?q=${value}&maxRows=5&username=${geonameKey}`
       );
       const data = await response.json();
       const resultadoUnico = filtrarDuplicatas(data.geonames);
