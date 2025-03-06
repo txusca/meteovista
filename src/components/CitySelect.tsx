@@ -63,7 +63,7 @@ export default function CitySelect({ setLocation }: CitySelectProps) {
     setCidade(value);
     if (value.length > 2) {
       const response = await fetch(
-        `http://api.geonames.org/searchJSON?q=${value}&maxRows=5&username=${geonameKey}`
+        `/api/geonames/searchJSON?q=${value}&maxRows=5&username=${geonameKey}`
       );
       const data = await response.json();
       const resultadoUnico = filtrarDuplicatas(data.geonames);
