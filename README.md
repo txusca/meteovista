@@ -45,6 +45,14 @@ Para instalar as dependências do projeto, execute:
 npm install
 ```
 
+### Configuração do Ambiente
+Para que o projeto funcione corretamente, é necessário configurar o arquivo `.env.local` com as seguintes variáveis de ambiente:
+- `NEXT_PUBLIC_APIKEY`: Chave de API necessária para integração com a OpenWeatherMap API.
+- `NEXT_PUBLIC_GEONAMEKEY`: Chave de API necessária para integração com a GeoNames API.
+
+Para o projeto funcione corretamente, é necessário configurar o .env.local com 
+NEXT_PUBLIC_APIKEY e NEXT_PUBLIC_GEONAMEKEY já que as duas apis são necessárias para o projeto
+
 ### Scripts Disponíveis
 
 No diretório do projeto, você pode executar:
@@ -77,6 +85,7 @@ Executa o linter para verificar problemas no código.
 - [TypeScript](https://www.typescriptlang.org/)
 - [Tailwind CSS](https://tailwindcss.com/)
 - [OpenWeatherMap API](https://openweathermap.org/api)
+- [GeoNames](https://www.geonames.org/)
 - [Vercel](https://vercel.com/)
 
 ### Estrutura de Componentes
