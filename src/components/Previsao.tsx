@@ -16,7 +16,7 @@ export default function Previsao(props: PrevisaoProps) {
     async function fetchCurrentWeather() {
       try {
         const response = await fetch(
-          `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${key}`
+          `/api/meteovista/current?lat=${latitude}&lon=${longitude}`
         );
         const data = await response.json();
         setCurrent(data);
