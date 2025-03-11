@@ -27,8 +27,6 @@ export default function CitySelect({ setLocation }: CitySelectProps) {
   const [result, setResult] = useState<Cidade[]>([]);
   const [errorMessage, setErrorMessage] = useState('');
 
-  const key = process.env.NEXT_PUBLIC_APIKEY;
-
   useEffect(() => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition((position) => {
@@ -40,15 +38,14 @@ export default function CitySelect({ setLocation }: CitySelectProps) {
 
   async function handleLocation() {
     try {
-      const response = await fetch(
-        `https://api.openweathermap.org/geo/1.0/direct?q=${cidade}&limit=1&appid=${key}`
-      );
+      const response = await fetch(`/api/meteovista/geolocation?q=${cidade}`);
       if (!response.ok) {
         if (response.status === 404) {
           setErrorMessage('Erro ao buscar localização');
           return;
         }
       }
+      setErrorMessage('');
       const data = await response.json();
       const { lat, lon } = data[0];
       setLocation({ latitude: lat, longitude: lon });
