@@ -28,7 +28,7 @@ export default function Previsao(props: PrevisaoProps) {
     async function fetchForecast() {
       try {
         const response = await fetch(
-          `https://api.openweathermap.org/data/2.5/forecast/daily?lat=${latitude}&lon=${longitude}&cnt=3&appid=${key}`
+          `/api/meteovista/forecast?lat=${latitude}&lon=${longitude}`
         );
         const data = await response.json();
         setForecastList(data.list);
