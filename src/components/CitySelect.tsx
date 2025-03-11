@@ -41,7 +41,7 @@ export default function CitySelect({ setLocation }: CitySelectProps) {
   async function handleLocation() {
     try {
       const response = await fetch(
-        `http://api.openweathermap.org/geo/1.0/direct?q=${cidade}&limit=1&appid=${key}`
+        `https://api.openweathermap.org/geo/1.0/direct?q=${cidade}&limit=1&appid=${key}`
       );
       if (!response.ok) {
         if (response.status === 404) {
